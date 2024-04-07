@@ -5,6 +5,10 @@
 
 #define mapWidth 80
 #define mapHeight 25
+#define monCount 8
+#define cloudCount 5
+#define goodCount 5
+
 
 typedef struct SObject {
 	float x, y;
@@ -22,23 +26,21 @@ TObject mario;
 TObject *brick = NULL;
 int brickLength;
 int level = 1;
-int goodCount = 0;
+int addedGood = 0;
+int gettedGood = 0;
+float v_sp = -1;
+float l_sp = 0.05;
 
 TObject *bullet = NULL;
 int bulletLength = 100;
 
-TObject monster;
-TObject monster2;
-
-TObject cloud;
-TObject good;
+TObject monster[monCount];
+int monstersBrick[monCount] = {0, 2, 3, 3, 3, 1, 3, 2};
+TObject cloud[cloudCount];
+TObject good[goodCount];
 
 void createLevel(int lvl);
 void putObjectOnMap(TObject obj);
-
-void addGood() {
-	goodCount += 15;
-}
 
 void clearMap() {
 	for (int i = 0; i < mapWidth; i++)
@@ -75,7 +77,7 @@ bool isCollision(TObject obj1, TObject obj2) {
 
 void vertMoveObject(TObject* obj) {
 	obj->isFly = TRUE;
-	obj->vertSpeed += 0.05;
+	obj->vertSpeed += l_sp;
 	setObjectPos(obj, obj->x, obj->y + obj->vertSpeed);
 	for (int i = 0; i < brickLength; i++)
 		if (isCollision(*obj, brick[i])) {
@@ -83,19 +85,18 @@ void vertMoveObject(TObject* obj) {
 			obj->vertSpeed = 0;
 			obj->isFly = FALSE;
 			if (brick[i].cType == '+') {
+				gettedGood += addedGood;
+				addedGood = 0;
 				level++;
-				if (level > 2)
+				if (level > 3) {
 					level = 1;
+					gettedGood = 0;
+				}
 				createLevel(level);
 				Sleep(1000);
 			}
 			break;
 		}
-	// if (isCollision(*obj, cloud)) {
-	// 	obj->y -= obj->vertSpeed;
-	// 	obj->vertSpeed = 0;
-	// 	obj->isFly = FALSE;
-	// }
 }
 
 void horMoveObject(TObject* obj) {
@@ -116,19 +117,17 @@ void horizonMoveMap(float dx) {
 		if (isCollision(mario, brick[i])) {
 			mario.x += dx;
 			return;
-		}
-	// if (isCollision(mario, cloud)) {
-	// 	mario.x += dx;
-	// 	return;
-	// }	
+		 }
 	mario.x += dx;
 
 	for (int i = 0; i < brickLength; i++)
 		brick[i].x += dx;
-	monster.x += dx;
-	monster2.x += dx;
-	cloud.x += dx;
-	good.x += dx;
+	for (int i = 0; i < monCount; i++)
+		monster[i].x += dx;
+	for (int i = 0; i < cloudCount; i++)
+		cloud[i].x += dx;
+	for (int i = 0; i < goodCount; i++)
+		good[i].x += dx;
 }
 
 bool isPosInMap(int x, int y) {
@@ -161,28 +160,75 @@ void createLevel(int lvl) {
 	initObject(&mario, 39, 10, 3, 3, '@');
 
 	if (1 == lvl) {
+		v_sp = -1;
+		l_sp = 0.05;
 		brickLength = 6;
 		brick = (TObject*)realloc(brick, sizeof(*brick) * brickLength);
 		initObject(brick+0, 20, 20, 55, 5, '#');
-		initObject(&cloud, 30, 10, 8, 3, '?');
 		initObject(brick+1, 80, 15, 22, 10, '#');
 		initObject(brick+2, 120, 20, 60, 5, '#');
 		initObject(brick+3, 180, 15, 30, 10, '#');
 		initObject(brick+4, 210, 20, 40, 5, '#');
 		initObject(brick+5, 270, 11, 3, 1, '+');
-		initObject(&monster, brick[1].x, brick[2].y - 2, 3, 2, '$');
-		initObject(&monster2, brick[2].x, brick[2].y - 3, 3, 3, '$');
 
-		monster.horSpeed = 0.5;	
-		monster2.horSpeed = 0.5;			
+		initObject(monster+0, brick[monstersBrick[0]].x, brick[monstersBrick[0]].y - 2, 3, 2, '$');
+		initObject(monster+1, brick[monstersBrick[1]].x, brick[monstersBrick[1]].y - 3, 3, 3, '$');
+		initObject(monster+2, brick[monstersBrick[2]].x, brick[monstersBrick[2]].y - 2, 3, 2, '$');
+
+		initObject(cloud+0, 30, 10, 8, 3, '?');
+		initObject(cloud+1, 200, 8, 8, 3, '?');
+
+		monster[0].horSpeed = 0.5;	
+		monster[1].horSpeed = 0.5;
+		monster[2].horSpeed = 0.5;
 	}
 	if (2 == lvl) {
+		v_sp = -1;		
+		l_sp = 0.05;		
 		brickLength = 4;
 		brick = (TObject*)realloc(brick, sizeof(*brick) * brickLength);
 		initObject(brick+0, 20, 20, 40, 5, '#');
 		initObject(brick+1, 80, 15, 15, 13, '#');
 		initObject(brick+2, 130, 15, 20, 7, '#');
 		initObject(brick+3, 190, 15, 20, 20, '+');
+		
+		initObject(monster+3, brick[monstersBrick[3]].x, brick[monstersBrick[3]].y - 2, 3, 2, '$');
+		initObject(monster+4, brick[monstersBrick[4]].x, brick[monstersBrick[4]].y - 3, 3, 3, '$');
+		initObject(monster+5, brick[monstersBrick[5]].x, brick[monstersBrick[5]].y - 2, 3, 2, '$');
+
+		initObject(cloud+2, 20, 10, 8, 3, '?');
+
+		monster[3].horSpeed = 0.5;	
+		monster[4].horSpeed = 0.5;
+		monster[5].horSpeed = 0.5;		
+	}
+	if (3 == lvl) {
+		initObject(&mario, 5, 4, 1, 1, '@');
+		v_sp = -0.71;	
+		l_sp = 0.032;			
+		brickLength = 16;
+		brick = (TObject*)realloc(brick, sizeof(*brick) * brickLength);
+		initObject(brick+0, 5, 5, 2, 30, '#');
+		initObject(brick+1, 20, 7, 2, 30, '#');
+		initObject(brick+2, 35, 9, 1, 30, '#');
+		initObject(brick+3, 46, 11, 1, 40, '#');
+		initObject(brick+4, 60, 13, 3, 30, '#');
+		initObject(brick+5, 80, 20, 4, 50, '#');
+		initObject(brick+6, 80, 1, 4, 13, '#');
+		initObject(brick+7, 100, 15, 3, 30, '#');
+		initObject(brick+8, 100, 3, 3, 8, '#');
+		initObject(brick+9, 125, 20, 3, 30, '#');
+		initObject(brick+10, 125, 3, 3, 14, '#');
+		initObject(brick+11, 142, 24, 10, 20, '#');
+		initObject(brick+12, 142, 1, 30, 20, '#');
+		initObject(brick+13, 163, 24, 40, 20, '#');
+		initObject(brick+14, 210, 18, 15, 30, '#');
+		initObject(brick+15, 226, 18, 1, 1, '+');						
+	}
+	if (4 == lvl) {
+		v_sp = -1;
+		l_sp = 0.05;				
+		printf("-1");
 	}
 }
 
@@ -203,24 +249,23 @@ int main() {
 		clearMap();
 
 		if ((FALSE == mario.isFly) && (GetKeyState(VK_SPACE) < 0))
-			mario.vertSpeed = -1;
+			mario.vertSpeed = v_sp;
 		if (GetKeyState('A') < 0) horizonMoveMap(1);
 		if (GetKeyState('D') < 0) horizonMoveMap(-1); 
 		if (GetKeyState('Q') < 0) {shot(bullet+bulCount, 1); bulCount++;}
 		if (GetKeyState('E') < 0) {shot(bullet+bulCount, -1); bulCount++;}
 
-		if (mario.y > mapHeight)
+		if (mario.y > mapHeight) {
 			createLevel(level);
+			addedGood = 0;
+		}
 
-		horMoveObject(&monster);
-		putObjectOnMap(monster);
-		if (!(monsterOnBrick(monster, brick[1])))
-			monster.horSpeed *= -1;
-
-		horMoveObject(&monster2);
-		putObjectOnMap(monster2);
-		if (!(monsterOnBrick(monster2, brick[2])))
-			monster2.horSpeed *= -1;
+		for (int i = 0; i < monCount; i++) {
+			horMoveObject(monster+i);
+			putObjectOnMap(monster[i]);
+			if (!(monsterOnBrick(monster[i], brick[monstersBrick[i]])))
+				monster[i].horSpeed *= -1;
+		}			
 
 		for (int i = 0; i < bulCount; i++)
 			horMoveObject(bullet+i);
@@ -230,7 +275,9 @@ int main() {
 		for (int i = 0; i < brickLength; i++) {
 			putObjectOnMap(brick[i]);
 		}
-		putObjectOnMap(cloud);
+		for (int i = 0; i < cloudCount; i++) {
+			putObjectOnMap(cloud[i]);
+		}
 
 		vertMoveObject(&mario);		
 		putObjectOnMap(mario);
@@ -239,39 +286,43 @@ int main() {
 			if (!(isPosInMap(bullet[i].x, bullet[i].y))) {		
 				bulCount--;
 			}
-			if (isCollision(bullet[i], monster2)) {
-				bulCount--;
-				bullet[i].horSpeed = 0;
-				monster2.y = 80;
-			}
+			for (int j = 0; j < monCount; j++)
+				if (isCollision(bullet[i], monster[j])) {
+					bulCount--;
+					bullet[i].horSpeed = 0;
+					monster[j].y = 80;				
+				}
 			for (int j = 0; j < brickLength; j++)
 				if (isCollision(bullet[i], brick[j])) {
 					bulCount--;
 					bullet[i].horSpeed = 0;
 				}
 		}
-		if (isCollision(mario, monster))
-			createLevel(level);
-		if (isCollision(mario, monster2))
-			createLevel(level);	
-		if (isCollision(mario, cloud) && '?' == cloud.cType) {
-			cloud.cType = '-';
-			createGood(cloud, &good);
-		}	
-
-		if (good.x < cloud.x + cloud.width + 1)
-			horMoveObject(&good);
-		vertMoveObject(&good);
-		putObjectOnMap(good);
-		if (isCollision(mario, good)) {
-			addGood();
-			good.y += 20;
+		for (int i = 0; i < monCount; i++)
+			if (isCollision(mario, monster[i])) {
+				createLevel(level);
+				addedGood = 0;
+			}
+		for (int i = 0; i < cloudCount; i++)
+			if (isCollision(mario, cloud[i]) && '?' == cloud[i].cType) {
+				cloud[i].cType = '-';
+				createGood(cloud[i], good+i);
+			}	
+		for (int i = 0; i < cloudCount; i++) {
+			if (good[i].x < cloud[i].x + cloud[i].width + 1)
+				horMoveObject(good+i);
+			vertMoveObject(good+i);
+			putObjectOnMap(good[i]);
+			if (isCollision(mario, good[i])) {
+				addedGood += 15;
+				good[i].y += 20;
+			}
 		}
 
 		if (bulCount < 0)	
 			bulCount = 0;
 
-		sprintf(map[0], "Count of Goods: %d\n", goodCount);
+		sprintf(map[0], "Count of Goods: %d\n", (gettedGood + addedGood));
 
 		setCur(0, 0);
 		showMap();
