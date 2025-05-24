@@ -1,4 +1,8 @@
 EN:<br />
+
+Our ship had crashed on strange planet that fulled of wild animals. The engineer ask you to collect 50 kilos of cuprum and other goods for to fix the ship and to fly away from here.
+To collect 50 score to victory! <br />
+
 Enter ESC to close the game correctly<br />
 How to manipulate the mario: <br />
 AD - move left / right<br />
@@ -9,6 +13,10 @@ For normal view (in windows): <br />
 2. In app "cmd.exe" open properties->location->window_size, then change width to 80 and height to 25<br />
 
 RU:<br />
+
+Ваш корабль потерпел крушение на неизвестной планете, населенной дикими существами. Техник попросил вас собрать 50 кг меди для того, чтобы починить проводку и вы смогли улететь отсюда.
+Наберите 50 очков чтобы победить! <br />
+
 Нажмите ESC чтобы корректно закрыть игру <br />
 Как управлять марио<br />
 AD - движение влево или вправо<br />
@@ -20,3 +28,10 @@ QE - стрелять влево или вправо <br />
 
 <br />
 Пока что в игре реализовано 3 уровня. Максимум пока что можно набрать 45 очков
+
+
+RU Ваш корабль потерпел крушение на неизвестной планете, населенной дикими существами. Техник попросил вас собрать 50 кг меди для того, чтобы починить проводку и вы смогли улететь отсюда.
+Наберите 50 очков чтобы победить!
+
+EN Our ship had crashed on strange planet that fulled of wild animals. The engineer ask you to collect 50 kilos of cuprum and other goods for to fix the ship and to fly away from here.
+To collect 50 score to victory!
