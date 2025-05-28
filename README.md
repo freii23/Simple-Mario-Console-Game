@@ -1,7 +1,7 @@
 EN:<br />
 
 Our ship had crashed on strange planet that fulled of wild animals. The engineer ask you to collect 50 kilos of cuprum and other goods for to fix the ship and to fly away from here.
-To collect 50 score to victory! <br />
+Collect 50 score to victory! <br />
 
 Enter ESC to close the game correctly<br />
 How to manipulate the mario: <br />
